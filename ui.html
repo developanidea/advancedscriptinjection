@@ -1,10 +1,14 @@
+<script id="v-logic">
 (function() {
     'use strict';
+    
+    // If it's already there, remove it (Toggle behavior)
     if (document.getElementById('v-asi')) {
         document.getElementById('v-asi').remove();
         return;
     }
 
+    // --- 1. Your Styles ---
     const styles = `
         #v-asi { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 850px; height: 450px; background: #121212; border: 2px solid #fff; border-radius: 8px; z-index: 100000; font-family: monospace; color: #fff; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; transition: background 0.3s ease; }
         #v-header { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; }
@@ -27,6 +31,7 @@
     st.innerHTML = styles;
     document.head.appendChild(st);
 
+    // --- 2. Your UI Construction ---
     const ui = document.createElement('div');
     ui.id = 'v-asi';
     ui.innerHTML = `
@@ -63,7 +68,7 @@
 
     document.body.appendChild(ui);
 
-    // --- Drag Logic ---
+    // --- 3. Your Drag & Button Logic ---
     let dBtn = document.getElementById('v-drag');
     dBtn.onmousedown = (e) => {
         let r = ui.getBoundingClientRect();
@@ -83,7 +88,6 @@
         };
     };
 
-    // --- Button Logic ---
     const txt = document.getElementById('v-textarea');
     const ph = document.getElementById('v-placeholder');
     const lv = document.getElementById('v-list-view');
@@ -120,3 +124,4 @@
         }
     };
 })();
+</script>
