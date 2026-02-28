@@ -1,0 +1,122 @@
+(function() {
+    'use strict';
+    if (document.getElementById('v-asi')) {
+        document.getElementById('v-asi').remove();
+        return;
+    }
+
+    const styles = `
+        #v-asi { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 850px; height: 450px; background: #121212; border: 2px solid #fff; border-radius: 8px; z-index: 100000; font-family: monospace; color: #fff; padding: 20px; box-sizing: border-box; display: flex; flex-direction: column; transition: background 0.3s ease; }
+        #v-header { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; }
+        #v-title { font-size: 22px; font-weight: bold; }
+        #v-body { display: flex; flex: 1; gap: 20px; }
+        #v-sidebar { width: 180px; border: 1px solid #444; border-radius: 5px; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+        #v-main-area { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+        #v-editor-container { flex: 1; border: 1px solid #444; border-radius: 5px; position: relative; background: rgba(0,0,0,0.5); }
+        #v-textarea { width: 100%; height: 100%; background: none; border: none; color: #fff; padding: 15px; resize: none; outline: none; font-family: inherit; }
+        #v-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.4; pointer-events: none; }
+        #v-footer-btns { display: flex; gap: 15px; height: 60px; }
+        #v-sidebar button, #v-footer-btns button { background: rgba(0,0,0,0.3); border: 1px solid #fff; color: #fff; border-radius: 8px; cursor: pointer; font-family: inherit; transition: 0.2s; }
+        #v-sidebar button:hover, #v-footer-btns button:hover { background: rgba(255,255,255,0.1); }
+        .v-side-btn { padding: 8px; text-align: center; }
+        .v-action-btn { flex: 1; font-size: 16px; }
+        .v-script-item { display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #444; }
+    `;
+
+    const st = document.createElement('style');
+    st.innerHTML = styles;
+    document.head.appendChild(st);
+
+    const ui = document.createElement('div');
+    ui.id = 'v-asi';
+    ui.innerHTML = `
+        <div id="v-header">
+            <div id="v-title">Advanced Script Injection | velvet.redorb.net</div>
+            <div style="display:flex;gap:15px;align-items:center">
+                <button id="v-drag" style="background:none;border:none;color:#fff;cursor:move;font-size:24px" title="Drag UI">≡</button>
+                <button id="v-close" style="background:none;border:none;color:#fff;cursor:pointer;font-size:24px" title="Close">×</button>
+            </div>
+        </div>
+        <div id="v-body">
+            <div id="v-sidebar">
+                <div style="font-size:24px;font-weight:bold;margin-bottom:10px">Velvet</div>
+                <button class="v-side-btn" id="v-theme">Theme</button>
+                <button class="v-side-btn" id="v-edit-tab">Editor</button>
+                <button class="v-side-btn" id="v-list-tab">Script List</button>
+                <button class="v-side-btn" id="v-details">Website Details</button>
+                <button class="v-side-btn" id="v-settings">Menu Settings</button>
+            </div>
+            <div id="v-main-area">
+                <div id="v-editor-container">
+                    <div id="v-placeholder">input script here.</div>
+                    <textarea id="v-textarea"></textarea>
+                    <div id="v-list-view" style="display:none;padding:15px;height:100%;overflow-y:auto"></div>
+                </div>
+                <div id="v-footer-btns">
+                    <button class="v-action-btn" id="v-install">Install</button>
+                    <button class="v-action-btn" id="v-update">Update</button>
+                    <button class="v-action-btn" id="v-auto">Auto-Install on page load</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(ui);
+
+    // --- Drag Logic ---
+    let dBtn = document.getElementById('v-drag');
+    dBtn.onmousedown = (e) => {
+        let r = ui.getBoundingClientRect();
+        if (ui.style.transform !== 'none') {
+            ui.style.transform = 'none';
+            ui.style.left = r.left + 'px';
+            ui.style.top = r.top + 'px';
+        }
+        let stX = e.clientX, stY = e.clientY, initL = ui.offsetLeft, initT = ui.offsetTop;
+        document.onmousemove = (me) => {
+            ui.style.left = (initL + me.clientX - stX) + 'px';
+            ui.style.top = (initT + me.clientY - stY) + 'px';
+        };
+        document.onmouseup = () => {
+            document.onmousemove = null;
+            document.onmouseup = null;
+        };
+    };
+
+    // --- Button Logic ---
+    const txt = document.getElementById('v-textarea');
+    const ph = document.getElementById('v-placeholder');
+    const lv = document.getElementById('v-list-view');
+
+    txt.oninput = () => { ph.style.display = txt.value ? 'none' : 'block'; };
+    document.getElementById('v-close').onclick = () => ui.remove();
+    
+    document.getElementById('v-theme').onclick = () => {
+        ui.style.background = ui.style.background.includes('rgb(179, 58, 58)') ? '#121212' : '#b33a3a';
+    };
+
+    document.getElementById('v-details').onclick = () => {
+        const t = encodeURIComponent(document.title);
+        const u = encodeURIComponent(window.location.href);
+        window.open('https://htmlpreview.github.io/?https://raw.githubusercontent.com/developanidea/advancedscriptinjection/refs/heads/main/details.html&t=' + t + '&u=' + u, '_blank');
+    };
+
+    document.getElementById('v-settings').onclick = () => {
+        window.open('https://htmlpreview.github.io/?https://raw.githubusercontent.com/developanidea/advancedscriptinjection/refs/heads/main/settings.html', '_blank');
+    };
+
+    document.getElementById('v-install').onclick = () => {
+        const code = txt.value;
+        if (!code) return;
+        const name = prompt("Script Name:");
+        if (name) {
+            let s = JSON.parse(localStorage.getItem('v-scripts') || '{}');
+            s[name] = code;
+            localStorage.setItem('v-scripts', JSON.stringify(s));
+            const sc = document.createElement('script');
+            sc.textContent = code;
+            document.head.appendChild(sc);
+            alert('Injected & Saved!');
+        }
+    };
+})();
