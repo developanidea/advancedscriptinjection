@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Velvet ASI | Advanced Page Details</title>
+    <style>
+        body {
+            background: #121212;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        .details-container {
+            width: 700px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 2px solid #fff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        }
+        h1 {
+            border-bottom: 2px solid #b33a3a;
+            padding-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 22px;
+        }
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .label { color: #b33a3a; font-weight: bold; }
+        .value { color: #ddd; word-break: break-all; text-align: right; max-width: 60%; }
+        .status-pill {
+            background: #b33a3a;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+        }
+        button {
+            margin-top: 30px;
+            width: 100%;
+            background: none;
+            border: 1px solid #fff;
+            color: #fff;
+            padding: 15px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        button:hover { background: #fff; color: #121212; }
+    </style>
+</head>
+<body>
+    <div class="details-container">
+        <h1>Advanced Page Diagnostics</h1>
+        
+        <div class="data-row">
+            <span class="label">Document Title</span>
+            <span class="value" id="d-title">Loading...</span>
+        </div>
+        <div class="data-row">
+            <span class="label">Source URL</span>
+            <span class="value" id="d-url">Loading...</span>
+        </div>
+        <div class="data-row">
+            <span class="label">Protocol</span>
+            <span class="value" id="d-proto">Loading...</span>
+        </div>
+        <div class="data-row">
+            <span class="label">Injected Scripts</span>
+            <span class="value"><span class="status-pill">Active</span></span>
+        </div>
+        <div class="data-row">
+            <span class="label">Cookie Count</span>
+            <span class="value" id="d-cookies">0</span>
+        </div>
+        <div class="data-row">
+            <span class="label">Screen Resolution</span>
+            <span class="value" id="d-res">Loading...</span>
+        </div>
+
+        <button onclick="window.close()">Close Diagnostics</button>
+    </div>
+
+    <script>
+        // Use URLSearchParams to get data passed from the bookmarklet
+        const params = new URLSearchParams(window.location.search);
+        document.getElementById('d-title').innerText = params.get('t') || 'Unknown';
+        document.getElementById('d-url').innerText = params.get('u') || 'Unknown';
+        document.getElementById('d-proto').innerText = window.location.protocol.toUpperCase();
+        document.getElementById('d-cookies').innerText = document.cookie.split(';').length;
+        document.getElementById('d-res').innerText = `${window.screen.width}x${window.screen.height}`;
+    </script>
+</body>
+</html>
