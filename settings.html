@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Velvet ASI | Menu Settings</title>
+    <style>
+        body {
+            background: #121212;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .settings-card {
+            width: 450px;
+            background: rgba(179, 58, 58, 0.1);
+            backdrop-filter: blur(15px);
+            border: 2px solid #fff;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        h1 {
+            font-size: 20px;
+            margin-top: 0;
+            border-bottom: 1px solid #fff;
+            padding-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .setting-group {
+            margin: 25px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        input[type="range"] {
+            width: 100%;
+            accent-color: #b33a3a;
+            cursor: pointer;
+        }
+        .toggle-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        button {
+            width: 100%;
+            background: none;
+            border: 1px solid #fff;
+            color: #fff;
+            padding: 12px;
+            font-family: inherit;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #fff;
+            color: #b33a3a;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 10px;
+            opacity: 0.5;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="settings-card">
+        <h1>Menu Settings</h1>
+        
+        <div class="setting-group">
+            <label id="opacity-label">UI Opacity: 90%</label>
+            <input type="range" id="opacity" min="10" max="100" value="90">
+        </div>
+
+        <div class="setting-group">
+            <label id="blur-label">Background Blur: 10px</label>
+            <input type="range" id="blur" min="0" max="30" value="10">
+        </div>
+
+        <div class="setting-group toggle-group">
+            <span>Auto-Save Scripts</span>
+            <input type="checkbox" checked style="accent-color: #b33a3a;">
+        </div>
+
+        <button onclick="saveSettings()">Apply & Close</button>
+
+        <div class="footer">
+            Advanced Script Injection v2.0 | velvet.redorb.net
+        </div>
+    </div>
+
+    <script>
+        const opacityInput = document.getElementById('opacity');
+        const blurInput = document.getElementById('blur');
+
+        opacityInput.oninput = (e) => {
+            document.getElementById('opacity-label').innerText = `UI Opacity: ${e.target.value}%`;
+        };
+
+        blurInput.oninput = (e) => {
+            document.getElementById('blur-label').innerText = `Background Blur: ${e.target.value}px`;
+        };
+
+        function saveSettings() {
+            // Save to localStorage so the bookmarklet can read it
+            const settings = {
+                opacity: opacityInput.value / 100,
+                blur: blurInput.value
+            };
+            localStorage.setItem('v-asi-settings', JSON.stringify(settings));
+            alert('Settings Saved! Refresh the target page to apply.');
+            window.close();
+        }
+    </script>
+</body>
+</html>
