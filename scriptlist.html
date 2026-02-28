@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Velvet ASI | Script Manager</title>
+    <style>
+        body {
+            background: #121212;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+        .manager-container {
+            width: 800px;
+            background: rgba(179, 58, 58, 0.05);
+            backdrop-filter: blur(20px);
+            border: 2px solid #fff;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        }
+        h1 {
+            border-bottom: 2px solid #b33a3a;
+            padding-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .script-grid {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .script-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #444;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .script-name { font-weight: bold; color: #b33a3a; font-size: 16px; }
+        .actions { display: flex; gap: 10px; }
+        button {
+            background: none;
+            border: 1px solid #fff;
+            color: #fff;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-family: inherit;
+            border-radius: 5px;
+            transition: 0.2s;
+        }
+        button:hover { background: #fff; color: #121212; }
+        .del-btn { border-color: #ff4d4d; color: #ff4d4d; }
+        .del-btn:hover { background: #ff4d4d; color: #fff; }
+        .empty-msg { text-align: center; opacity: 0.5; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <div class="manager-container">
+        <h1>
+            Script Manager
+            <button onclick="location.reload()" style="font-size: 12px;">Refresh List</button>
+        </h1>
+        
+        <div id="script-list" class="script-grid">
+            </div>
+
+        <button onclick="window.close()" style="margin-top: 30px; width: 100%;">Close Manager</button>
+    </div>
+
+    <script>
+        function loadScripts() {
+            const container = document.getElementById('script-list');
+            const scripts = JSON.parse(localStorage.getItem('v-scripts') || '{}');
+            const keys = Object.keys(scripts);
+
+            if (keys.length === 0) {
+                container.innerHTML = '<div class="empty-msg">No scripts found in local storage.</div>';
+                return;
+            }
+
+            container.innerHTML = keys.map(name => `
+                <div class="script-card">
+                    <span class="script-name">${name}</span>
+                    <div class="actions">
+                        <button onclick="copyScript('${name}')">Copy Code</button>
+                        <button class="del-btn" onclick="deleteScript('${name}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function copyScript(name) {
+            const scripts = JSON.parse(localStorage.getItem('v-scripts'));
+            navigator.clipboard.writeText(scripts[name]);
+            alert('Code copied to clipboard! 📋');
+        }
+
+        function deleteScript(name) {
+            if (confirm(`Are you sure you want to delete "${name}"?`)) {
+                let scripts = JSON.parse(localStorage.getItem('v-scripts'));
+                delete scripts[name];
+                localStorage.setItem('v-scripts', JSON.stringify(scripts));
+                loadScripts();
+            }
+        }
+
+        window.onload = loadScripts;
+    </script>
+</body>
+</html>
