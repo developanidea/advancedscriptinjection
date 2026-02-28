@@ -1,31 +1,30 @@
-<div id="v-asi" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:850px;height:450px;background:#121212;border:2px solid #fff;border-radius:8px;z-index:100000;font-family:monospace;color:#fff;padding:20px;box-sizing:border-box;display:flex;flex-direction:column;transition:background 0.3s ease;">
+<div id="v-asi" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:850px;height:450px;background:#121212;border:2px solid #fff;border-radius:8px;z-index:100000;font-family:monospace;color:#fff;padding:20px;box-sizing:border-box;display:flex;flex-direction:column;box-shadow: 0 0 20px rgba(0,0,0,0.8);">
     <style>
-        #v-header { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; }
-        #v-body { display: flex; flex: 1; gap: 20px; }
-        #v-sidebar { width: 180px; border: 1px solid #444; border-radius: 5px; padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+        #v-header { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        #v-body { display: flex; flex: 1; gap: 20px; overflow: hidden; }
+        #v-sidebar { width: 180px; border: 1px solid #444; border-radius: 5px; padding: 10px; display: flex; flex-direction: column; gap: 10px; background: rgba(255,255,255,0.02); }
         #v-main-area { flex: 1; display: flex; flex-direction: column; gap: 15px; }
-        #v-editor-container { flex: 1; border: 1px solid #444; border-radius: 5px; position: relative; background: rgba(0,0,0,0.5); }
-        #v-textarea { width: 100%; height: 100%; background: none; border: none; color: #fff; padding: 15px; resize: none; outline: none; font-family: inherit; }
-        #v-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.4; pointer-events: none; }
+        #v-editor-container { flex: 1; border: 1px solid #444; border-radius: 5px; position: relative; background: rgba(0,0,0,0.3); }
+        #v-textarea { width: 100%; height: 100%; background: none; border: none; color: #fff; padding: 15px; resize: none; outline: none; font-family: inherit; font-size: 13px; line-height: 1.5; }
+        #v-placeholder { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.3; pointer-events: none; font-size: 14px; }
         #v-footer-btns { display: flex; gap: 15px; height: 60px; }
-        #v-sidebar button, #v-footer-btns button { background: rgba(0,0,0,0.3); border: 1px solid #fff; color: #fff; border-radius: 8px; cursor: pointer; font-family: inherit; transition: 0.2s; }
-        #v-sidebar button:hover, #v-footer-btns button:hover { background: rgba(255,255,255,0.1); }
-        .v-side-btn { padding: 8px; text-align: center; }
-        .v-action-btn { flex: 1; font-size: 16px; }
-        .v-script-item { display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #444; }
+        #v-sidebar button, #v-footer-btns button { background: rgba(255,255,255,0.05); border: 1px solid #fff; color: #fff; border-radius: 8px; cursor: pointer; font-family: inherit; transition: all 0.2s ease; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        #v-sidebar button:hover, #v-footer-btns button:hover { background: rgba(255,255,255,0.15); box-shadow: 0 0 10px rgba(255,255,255,0.1); }
+        .v-side-btn { padding: 10px; text-align: center; }
+        .v-action-btn { flex: 1; font-size: 14px; font-weight: bold; }
     </style>
 
     <div id="v-header">
-        <div style="font-size:22px;font-weight:bold;">Advanced Script Injection | velvet.redorb.net</div>
+        <div style="font-size:20px;font-weight:bold; letter-spacing: 1px;">Advanced Script Injection | velvet.redorb.net</div>
         <div style="display:flex;gap:15px;align-items:center">
-            <button id="v-drag" style="background:none;border:none;color:#fff;cursor:move;font-size:24px">≡</button>
-            <button id="v-close" style="background:none;border:none;color:#fff;cursor:pointer;font-size:24px">×</button>
+            <button id="v-drag" style="background:none;border:none;color:#fff;cursor:move;font-size:24px; padding: 0 5px;" title="Drag UI">≡</button>
+            <button id="v-close" style="background:none;border:none;color:#fff;cursor:pointer;font-size:24px; padding: 0 5px;" title="Close">×</button>
         </div>
     </div>
 
     <div id="v-body">
         <div id="v-sidebar">
-            <div style="font-size:24px;font-weight:bold;margin-bottom:10px">Velvet</div>
+            <div style="font-size:24px;font-weight:bold;margin-bottom:10px; color: #fff;">Velvet</div>
             <button class="v-side-btn" id="v-theme">Theme</button>
             <button class="v-side-btn" id="v-edit-tab">Editor</button>
             <button class="v-side-btn" id="v-list-tab">Script List</button>
@@ -35,8 +34,7 @@
         <div id="v-main-area">
             <div id="v-editor-container">
                 <div id="v-placeholder">input script here.</div>
-                <textarea id="v-textarea"></textarea>
-                <div id="v-list-view" style="display:none;padding:15px;height:100%;overflow-y:auto"></div>
+                <textarea id="v-textarea" spellcheck="false"></textarea>
             </div>
             <div id="v-footer-btns">
                 <button class="v-action-btn" id="v-install">Install</button>
@@ -48,11 +46,9 @@
 
     <script id="v-logic">
     (function() {
-        'use strict';
         const ui = document.getElementById('v-asi');
         const txt = document.getElementById('v-textarea');
         const ph = document.getElementById('v-placeholder');
-        const lv = document.getElementById('v-list-view');
 
         // --- Drag Logic ---
         document.getElementById('v-drag').onmousedown = (e) => {
@@ -68,81 +64,58 @@
             document.onmouseup = () => { document.onmousemove = null; };
         };
 
-        // --- Tab Switching ---
-        document.getElementById('v-edit-tab').onclick = () => {
-            txt.style.display = 'block';
-            lv.style.display = 'none';
-            ph.style.display = txt.value ? 'none' : 'block';
-        };
+        // --- Interface Logic ---
+        document.getElementById('v-close').onclick = () => ui.remove();
+        
+        txt.oninput = () => { ph.style.display = txt.value ? 'none' : 'block'; };
 
-        document.getElementById('v-list-tab').onclick = () => {
-            txt.style.display = 'none';
-            ph.style.display = 'none';
-            lv.style.display = 'block';
-            renderList();
-        };
-
-        // --- Theme & Details ---
         document.getElementById('v-theme').onclick = () => {
-            ui.style.background = ui.style.background.includes('rgb(179, 58, 58)') ? '#121212' : '#b33a3a';
+            const isRed = ui.style.background.includes('rgb(179, 58, 58)');
+            ui.style.background = isRed ? '#121212' : '#b33a3a';
+        };
+
+        // --- Navigation to External Pages ---
+        document.getElementById('v-list-tab').onclick = () => {
+            window.open('https://htmlpreview.github.io/?https://raw.githubusercontent.com/developanidea/advancedscriptinjection/refs/heads/main/scriptlist.html', '_blank');
         };
 
         document.getElementById('v-details').onclick = () => {
             const t = encodeURIComponent(document.title);
             const u = encodeURIComponent(window.location.href);
-            window.open('https://htmlpreview.github.io/?https://raw.githubusercontent.com/developanidea/advancedscriptinjection/refs/heads/main/details.html&t=' + t + '&u=' + u, '_blank');
+            window.open(`https://htmlpreview.github.io/?https://raw.githubusercontent.com/developanidea/advancedscriptinjection/refs/heads/main/details.html&t=${t}&u=${u}`, '_blank');
         };
 
         document.getElementById('v-settings').onclick = () => {
             window.open('https://htmlpreview.github.io/?https://raw.githubusercontent.com/developanidea/advancedscriptinjection/refs/heads/main/settings.html', '_blank');
         };
 
-        // --- Script List Logic ---
-        function renderList() {
-            const s = JSON.parse(localStorage.getItem('v-scripts') || '{}');
-            const keys = Object.keys(s);
-            if (keys.length === 0) {
-                lv.innerHTML = '<div style="opacity:0.5; text-align:center; margin-top:20px;">No scripts saved yet.</div>';
-                return;
-            }
-            lv.innerHTML = keys.map(k => `
-                <div class="v-script-item" style="display:flex; justify-content:space-between; align-items:center; padding:10px; border-bottom:1px solid #444;">
-                    <span style="font-weight:bold; color:#b33a3a;">${k}</span>
-                    <div style="display:flex; gap:10px;">
-                        <button class="l-run" data-name="${k}" style="background:none; border:1px solid #fff; color:#fff; cursor:pointer; padding:4px 8px;">Run</button>
-                        <button class="l-del" data-name="${k}" style="background:none; border:1px solid #f44; color:#f44; cursor:pointer; padding:4px 8px;">Del</button>
-                    </div>
-                </div>
-            `).join('');
-            lv.querySelectorAll('.l-run').forEach(b => b.onclick = () => {
-                eval(JSON.parse(localStorage.getItem('v-scripts'))[b.dataset.name]);
-                alert('Running: ' + b.dataset.name);
-            });
-            lv.querySelectorAll('.l-del').forEach(b => b.onclick = () => {
-                let scripts = JSON.parse(localStorage.getItem('v-scripts'));
-                delete scripts[b.dataset.name];
-                localStorage.setItem('v-scripts', JSON.stringify(scripts));
-                renderList();
-            });
-        }
-
-        // --- Controls ---
-        document.getElementById('v-close').onclick = () => ui.remove();
-        txt.oninput = () => { ph.style.display = txt.value ? 'none' : 'block'; };
-
+        // --- Core Functions ---
         document.getElementById('v-install').onclick = () => {
             const code = txt.value;
             if (!code) return;
-            const name = prompt("Script Name:");
+            const name = prompt("Enter a name for this script:");
             if (name) {
                 let s = JSON.parse(localStorage.getItem('v-scripts') || '{}');
                 s[name] = code;
                 localStorage.setItem('v-scripts', JSON.stringify(s));
-                eval(code);
-                alert('Saved & Injected!');
+                try {
+                    eval(code);
+                    alert('♢ Script Injected and Saved Successfully!');
+                } catch(e) {
+                    alert('♢ Injection Error: ' + e);
+                }
                 txt.value = "";
                 ph.style.display = 'block';
             }
+        };
+
+        document.getElementById('v-update').onclick = () => {
+            alert('Opening Script Manager to update existing code...');
+            document.getElementById('v-list-tab').click();
+        };
+
+        document.getElementById('v-auto').onclick = () => {
+            alert('Auto-Install logic toggled! (Feature being finalized in your Zed workspace)');
         };
     })();
     </script>
